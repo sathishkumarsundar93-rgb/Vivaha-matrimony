@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VivahMatch - Find Your Perfect Partner</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    body { background: #fef7f0; color: #2d2a2a; }
+    .header { background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+    .nav-container { max-width: 1280px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+    .logo { font-size: 28px; font-weight: 700; background: linear-gradient(135deg,#c62e6e,#e84545); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .logo i { color: #e84545; background: none; -webkit-background-clip: unset; background-clip: unset; margin-right: 6px; }
+    .nav-links { display: flex; gap: 32px; font-weight: 500; }
+    .nav-links a { text-decoration: none; color: #4a4a4a; transition: 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: #e84545; }
+    .auth-buttons { display: flex; gap: 12px; align-items: center; }
+    .btn-outline { background: transparent; border: 1px solid #e84545; color: #e84545; padding: 8px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-outline:hover { background: #e84545; color: white; }
+    .btn-primary { background: #e84545; border: none; color: white; padding: 8px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary:hover { background: #c62e6e; }
+    #loggedInUser { font-weight: 600; color: #c62e6e; font-size: 0.9rem; }
+    .hero { background: linear-gradient(135deg,#fff5ed,#ffe6f0); padding: 48px 24px; text-align: center; }
+    .hero h1 { font-size: 2.6rem; font-weight: 700; color: #c62e6e; margin-bottom: 16px; }
+    .hero p { font-size: 1.2rem; color: #5a5a5a; max-width: 700px; margin: 0 auto 32px; }
+    .search-bar-large { max-width: 600px; margin: 0 auto; display: flex; background: white; border-radius: 60px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); overflow: hidden; }
+    .search-bar-large input { flex: 1; border: none; padding: 16px 24px; font-size: 1rem; outline: none; }
+    .search-bar-large button { background: #e84545; border: none; padding: 0 32px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    .filters-section { background: white; border-radius: 40px; margin: 32px auto; max-width: 1280px; padding: 24px 28px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+    .filter-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; align-items: flex-end; }
+    .filter-group { flex: 1; min-width: 140px; }
+    .filter-group label { display: block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: #a55a5a; margin-bottom: 6px; }
+    .filter-group select, .filter-group input { width: 100%; padding: 10px 12px; border-radius: 30px; border: 1px solid #e0d0d0; background: #fff; font-size: 0.9rem; outline: none; }
+    .filter-btn { background: #e84545; color: white; border: none; padding: 10px 28px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px 48px; }
+    .section-title { font-size: 1.8rem; font-weight: 600; margin: 32px 0 20px; color: #c62e6e; border-left: 5px solid #e84545; padding-left: 16px; }
+    .profile-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 28px; }
+    .profile-card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+    .profile-card:hover { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(0,0,0,0.1); }
+    .card-img { width: 100%; height: 260px; object-fit: cover; background: #f5e6e0; }
+    .card-info { padding: 18px; }
+    .card-name { font-size: 1.4rem; font-weight: 700; display: flex; justify-content: space-between; }
+    .card-age { font-weight: 500; color: #e84545; }
+    .card-details { margin: 8px 0; color: #5a5a5a; font-size: 0.9rem; display: flex; gap: 12px; flex-wrap: wrap; }
+    .card-details i { width: 20px; color: #e84545; }
+    .interest-btn { width: 100%; background: #ffe6e6; border: none; padding: 10px; margin-top: 12px; border-radius: 40px; font-weight: 600; color: #e84545; cursor: pointer; transition: 0.2s; }
+    .interest-btn:hover { background: #e84545; color: white; }
+    .interest-btn:disabled { background: #eee; color: #aaa; cursor: not-allowed; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-box { background: white; max-width: 460px; width: 90%; border-radius: 28px; padding: 36px; animation: fadeInUp 0.3s; }
+    .modal-box h2 { font-size: 1.8rem; color: #c62e6e; margin-bottom: 20px; }
+    .modal-box input, .modal-box select { width: 100%; padding: 12px 16px; border: 1px solid #e0d0d0; border-radius: 30px; margin-bottom: 14px; font-size: 0.95rem; outline: none; }
+    .modal-box button.submit-btn { width: 100%; background: #e84545; border: none; color: white; padding: 13px; border-radius: 40px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 4px; }
+    .modal-box .switch-link { text-align: center; margin-top: 16px; font-size: 0.9rem; color: #777; }
+    .modal-box .switch-link a { color: #e84545; cursor: pointer; font-weight: 600; }
+    .modal-close-btn { float: right; background: none; border: none; font-size: 22px; cursor: pointer; color: #aaa; margin-top: -8px; }
+    .error-msg { color: #e84545; font-size: 0.85rem; margin-bottom: 10px; text-align: center; }
+    .profile-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; }
+    .profile-modal.active { display: flex; }
+    .profile-modal-content { background: white; max-width: 500px; width: 90%; border-radius: 32px; overflow: hidden; animation: fadeInUp 0.3s; }
+    .modal-img { width: 100%; height: 280px; object-fit: cover; }
+    .modal-body { padding: 24px; }
+    .modal-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+    .modal-detail { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem; color: #555; }
+    .modal-detail span { display: flex; align-items: center; gap: 6px; }
+    .send-interest { background: #e84545; width: 100%; padding: 14px; border: none; color: white; font-weight: bold; border-radius: 40px; margin-top: 20px; cursor: pointer; font-size: 1rem; }
+    .send-interest:disabled { background: #aaa; cursor: not-allowed; }
+    .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); background: #2d2a2a; color: white; padding: 12px 28px; border-radius: 40px; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    footer { background: #2d2a2a; color: #ccc; text-align: center; padding: 24px; margin-top: 32px; }
+    @media (max-width: 800px) {
+      .nav-container { flex-direction: column; text-align: center; }
+      .filter-grid { flex-direction: column; gap: 12px; }
+      .filter-group { width: 100%; }
+      .hero h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="nav-container">
+    <div class="logo"><i class="fas fa-heart"></i> VivahMatch</div>
+    <div class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="#">Matches</a>
+      <a href="#">Success Stories</a>
+      <a href="#">Help</a>
+    </div>
+    <div class="auth-buttons" id="authButtons">
+      <button class="btn-outline" id="loginBtn">Login</button>
+      <button class="btn-primary" id="registerBtn">Register Free</button>
+    </div>
+  </div>
+</header>
+<section class="hero">
+  <h1>Find your soulmate, <br>the modern way</h1>
+  <p>Join lakhs of successful couples who found their perfect match on VivahMatch.</p>
+  <div class="search-bar-large">
+    <input type="text" placeholder="Search by name, city, or profession..." id="globalSearch">
+    <button id="globalSearchBtn"><i class="fas fa-search"></i> Search</button>
+  </div>
+</section>
+<div class="filters-section">
+  <div class="filter-grid">
+    <div class="filter-group">
+      <label>Looking for</label>
+      <select id="genderFilter">
+        <option value="all">All</option>
+        <option value="Female">Women</option>
+        <option value="Male">Men</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Age</label>
+      <select id="ageFilter">
+        <option value="all">All</option>
+        <option value="20-25">20-25</option>
+        <option value="26-30">26-30</option>
+        <option value="31-35">31-35</option>
+        <option value="36-40">36-40</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Religion</label>
+      <select id="religionFilter">
+        <option value="all">All</option>
+        <option value="Hindu">Hindu</option>
+        <option value="Muslim">Muslim</option>
+        <option value="Christian">Christian</option>
+        <option value="Sikh">Sikh</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>City</label>
+      <select id="cityFilter">
+        <option value="all">All</option>
+        <option value="Mumbai">Mumbai</option>
+        <option value="Delhi">Delhi</option>
+        <option value="Bangalore">Bangalore</option>
+        <option value="Chennai">Chennai</option>
+        <option value="Kolkata">Kolkata</option>
+      </select>
+    </div>
+    <button class="filter-btn" id="applyFilters"><i class="fas fa-sliders-h"></i> Apply</button>
+  </div>
+</div>
+<div class="container">
+  <div class="section-title"><i class="fas fa-users"></i> Suggested Matches</div>
+  <div class="profile-grid" id="profileGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;">
+      <i class="fas fa-spinner fa-spin fa-2x"></i><br><br>Login to browse matches
+    </div>
+  </div>
+</div>
+<footer><p>© 2025 VivahMatch – Where Hearts Meet. Designed for love.</p></footer>
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" id="closeLoginModal">&times;</button>
+    <h2><i class="fas fa-heart"></i> Welcome Back</h2>
+    <div class="error-msg" id="loginError"></div>
+    <input type="email" id="loginEmail" placeholder="Email address">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button class="submit-btn" id="doLogin">Login</button>
+    <div class="switch-link">Don't have an account? <a id="switchToRegister">Register Free</a></div>
+  </div>
+</div>
+<div class="modal" id="registerModal">
+  <div class="modal-box">
+    <button class="modal-close-btn" id="closeRegisterModal">&times;</button>
+    <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+    <div class="error-msg" id="registerError"></div>
+    <input type="text" id="regName" placeholder="Full Name">
+    <input type="email" id="regEmail" placeholder="Email Address">
+    <input type="password" id="regPassword" placeholder="Password (min 6 chars)">
+    <select id="regGender">
+      <option value="">Select Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <input type="number" id="regAge" placeholder="Age" min="18" max="60">
+    <input type="text" id="regReligion" placeholder="Religion (e.g. Hindu)">
+    <input type="text" id="regCity" placeholder="City">
+    <input type="text" id="regProfession" placeholder="Profession">
+    <button class="submit-btn" id="doRegister">Create Account</button>
+    <div class="switch-link">Already have an account? <a id="switchToLogin">Login</a></div>
+  </div>
+</div>
+<div class="profile-modal" id="profileModal">
+  <div class="profile-modal-content">
+    <img id="modalImg" class="modal-img" src="" alt="">
+    <div class="modal-body">
+      <button class="modal-close-btn" id="closeProfileModal" style="float:right">&times;</button>
+      <div class="modal-title" id="modalName"></div>
+      <div class="modal-detail" id="modalDetail"></div>
+      <button class="send-interest" id="modalInterestBtn"><i class="fas fa-envelope"></i> Send Interest</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  let token = localStorage.getItem('vmToken') || null;
+  let currentUser = JSON.parse(localStorage.getItem('vmUser') || 'null');
+  let currentModalProfileId = null;
+
+  function showToast(msg, duration = 3000) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+
+  async function apiFetch(url, options = {}) {
+    if (token) {
+      options.headers = { ...(options.headers || {}), 'x-auth-token': token, 'Content-Type': 'application/json' };
+    } else {
+      options.headers = { ...(options.headers || {}), 'Content-Type': 'application/json' };
+    }
+    const res = await fetch(url, options);
+    const data = await res.json();
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  function updateAuthUI() {
+    const btns = document.getElementById('authButtons');
+    if (currentUser) {
+      btns.innerHTML = `
+        <span id="loggedInUser">👤 ${currentUser.name}</span>
+        <button class="btn-outline" id="logoutBtn">Logout</button>
+      `;
+      document.getElementById('logoutBtn').addEventListener('click', logout);
+    } else {
+      btns.innerHTML = `
+        <button class="btn-outline" id="loginBtn">Login</button>
+        <button class="btn-primary" id="registerBtn">Register Free</button>
+      `;
+      document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
+      document.getElementById('registerBtn').addEventListener('click', () => openModal('registerModal'));
+    }
+  }
+
+  function logout() {
+    token = null; currentUser = null;
+    localStorage.removeItem('vmToken');
+    localStorage.removeItem('vmUser');
+    updateAuthUI();
+    document.getElementById('profileGrid').innerHTML =
+      `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;"><i class="fas fa-lock fa-2x"></i><br><br>Login to browse matches</div>`;
+    showToast('Logged out successfully');
+  }
+
+  function openModal(id) { document.getElementById(id).classList.add('active'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+  document.getElementById('closeLoginModal').onclick    = () => closeModal('loginModal');
+  document.getElementById('closeRegisterModal').onclick = () => closeModal('registerModal');
+  document.getElementById('closeProfileModal').onclick  = () => closeModal('profileModal');
+  document.getElementById('switchToRegister').onclick   = () => { closeModal('loginModal'); openModal('registerModal'); };
+  document.getElementById('switchToLogin').onclick      = () => { closeModal('registerModal'); openModal('loginModal'); };
+
+  window.addEventListener('click', (e) => {
+    ['loginModal','registerModal','profileModal'].forEach(id => {
+      if (e.target === document.getElementById(id)) closeModal(id);
+    });
+  });
+
+  document.getElementById('doLogin').addEventListener('click', async () => {
+    const email    = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    document.getElementById('loginError').textContent = '';
+    if (!email || !password) { document.getElementById('loginError').textContent = 'Please fill in all fields.'; return; }
+    const { ok, data } = await apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    if (ok) {
+      token = data.token; currentUser = data.user;
+      localStorage.setItem('vmToken', token);
+      localStorage.setItem('vmUser', JSON.stringify(currentUser));
+      closeModal('loginModal');
+      updateAuthUI();
+      loadProfiles();
+      showToast(`Welcome back, ${currentUser.name}! 💕`);
+    } else {
+      document.getElementById('loginError').textContent = data.msg || 'Login failed.';
+    }
+  });
+
+  document.getElementById('doRegister').addEventListener('click', async () => {
+    const body = {
+      name: document.getElementById('regName').value.trim(),
+      email: document.getElementById('regEmail').value.trim(),
+      password: document.getElementById('regPassword').value,
+      gender: document.getElementById('regGender').value,
+      age: parseInt(document.getElementById('regAge').value),
+      religion: document.getElementById('regReligion').value.trim(),
+      city: document.getElementById('regCity').value.trim(),
+      profession: document.getElementById('regProfession').value.trim()
+    };
+    document.getElementById('registerError').textContent = '';
+    if (!body.name || !body.email || !body.password || !body.gender || !body.age || !body.religion || !body.city || !body.profession) {
+      document.getElementById('registerError').textContent = 'Please fill in all required fields.'; return;
+    }
+    const { ok, data } = await apiFetch('/api/auth/register', { method: 'POST', body: JSON.stringify(body) });
+    if (ok) {
+      token = data.token; currentUser = data.user;
+      localStorage.setItem('vmToken', token);
+      localStorage.setItem('vmUser', JSON.stringify(currentUser));
+      closeModal('registerModal');
+      updateAuthUI();
+      loadProfiles();
+      showToast(`Welcome to VivahMatch, ${currentUser.name}! 💕`);
+    } else {
+      const msg = data.errors ? data.errors.map(e => e.msg).join(', ') : (data.msg || 'Registration failed.');
+      document.getElementById('registerError').textContent = msg;
+    }
+  });
+
+  async function loadProfiles() {
+    if (!token) return;
+    const gender   = document.getElementById('genderFilter').value;
+    const age      = document.getElementById('ageFilter').value;
+    const religion = document.getElementById('religionFilter').value;
+    const city     = document.getElementById('cityFilter').value;
+    const search   = document.getElementById('globalSearch').value.trim();
+    const params = new URLSearchParams();
+    if (gender   !== 'all') params.set('gender', gender);
+    if (age      !== 'all') params.set('age', age);
+    if (religion !== 'all') params.set('religion', religion);
+    if (city     !== 'all') params.set('city', city);
+    if (search)             params.set('search', search);
+    const grid = document.getElementById('profileGrid');
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;"><i class="fas fa-spinner fa-spin fa-2x"></i></div>`;
+    const { ok, data } = await apiFetch(`/api/profiles?${params.toString()}`);
+    if (!ok) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#e84545;">Failed to load profiles.</div>`; return; }
+    if (data.length === 0) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:#aaa;">No profiles found. Try adjusting filters.</div>`; return; }
+    grid.innerHTML = data.map(p => `
+      <div class="profile-card" data-id="${p._id}">
+        <img class="card-img" src="${p.profilePic || 'https://randomuser.me/api/portraits/men/1.jpg'}" alt="${p.name}" onerror="this.src='https://randomuser.me/api/portraits/men/1.jpg'">
+        div class="card-name">${p.name} <span class="card-age">${p.age}</span></div>
+          <div class="card-details"><span><i class="fas fa-briefcase"></i> ${p.profession}</span><span><i class="fas fa-map-marker-alt"></i> ${p.city}</span></div>
+          <div class="card-details"><span><i class="fas fa-heart"></i> ${p.religion}</span>${p.education?`<span><i class="fas fa-graduation-cap"></i> ${p.education}</span>`:''}</div>
+          <button class="interest-btn" data-id="${p._id}"><i class="fas fa-envelope"></i> Send Interest</button>
+        </div>
+      </div>`).join('');
+    grid.querySelectorAll('.profile-card').forEach(card => {
+      card.addEventListener('click', (e) => { if (e.target.closest('.interest-btn')) return; openProfileModal(card.dataset.id, data); });
+    });
+    grid.querySelectorAll('.interest-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); sendInterest(btn.dataset.id, btn); });
+    });
+  }
+
+  function openProfileModal(id, profiles) {
+    const p = profiles.find(x => x._id === id);
+    if (!p) return;
+    currentModalProfileId = id;
+    document.getElementById('modalImg').src = p.profilePic || 'https://randomuser.me/api/portraits/men/1.jpg';
+    document.getElementById('modalName').textContent = `${p.name}, ${p.age}`;
+    document.getElementById('modalDetail').innerHTML = `
+      <span><i class="fas fa-venus-mars"></i> ${p.gender}</span>
+      <span><i class="fas fa-globe"></i> ${p.religion}</span>
+      <span><i class="fas fa-city"></i> ${p.city}</span>
+      ${p.education?`<span><i class="fas fa-graduation-cap"></i> ${p.education}</span>`:''}
+      ${p.height?`<span><i class="fas fa-ruler"></i> ${p.height}</span>`:''}
+      ${p.profession?`<span><i class="fas fa-briefcase"></i> ${p.profession}</span>`:''}
+      ${p.about?`<span><i class="fas fa-info-circle"></i> ${p.about}</span>`:''}`;
+    document.getElementById('modalInterestBtn').disabled = false;
+    document.getElementById('modalInterestBtn').textContent = 'Send Interest';
+    openModal('profileModal');
+  }
+
+  document.getElementById('modalInterestBtn').addEventListener('click', () => {
+    if (currentModalProfileId) sendInterest(currentModalProfileId, document.getElementById('modalInterestBtn'));
+  });
+
+  async function sendInterest(toUserId, btn) {
+    if (!token) { showToast('Please login first'); openModal('loginModal'); return; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    const { ok, data } = await apiFetch(`/api/interests/send/${toUserId}`, { method: 'POST' });
+    if (ok) { showToast('💌 Interest sent!'); if (btn) btn.textContent = '✓ Sent'; }
+    else { showToast(data.msg || 'Could not send'); if (btn) { btn.disabled = false; btn.textContent = 'Send Interest'; } }
+  }
+
+  document.getElementById('applyFilters').addEventListener('click', loadProfiles);
+  document.getElementById('globalSearchBtn').addEventListener('click', loadProfiles);
+  document.getElementById('globalSearch').addEventListener('keyup', e => { if (e.key === 'Enter') loadProfiles(); });
+
+  updateAuthUI();
+  if (token) loadProfiles();
+</script>
+</body>
+</html>
+        
